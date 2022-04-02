@@ -8,9 +8,10 @@ public class EnemyController : MonoBehaviour
 
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] SpriteRenderer _sprite;
+	[SerializeField] float _health = 10f;
 
 	[Header("Animation Variables")]
-	[SerializeField] public float _runSpeed;
+	[SerializeField] public float _runSpeed = 1;
 	[SerializeField] public float _idleTime;
 	[SerializeField] public float _frameRate;
 	[SerializeField] int _direction;
@@ -28,8 +29,8 @@ public class EnemyController : MonoBehaviour
 	[SerializeField] List<Sprite> _seIdleSprites;
 	[SerializeField] List<Sprite> _sIdleSprites;
 
-	public Vector2 _velocity;
-	public bool _isMoving;
+	public Vector2 velocity;
+	public bool isChasingPlayer;
 
 	// Start is called before the first frame update
 	void Start()
@@ -41,38 +42,51 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
 		SetAnimation();
+		SetDirection();
+		HandleSpriteFlip();
+		SetSprite();
+	}
+
+	//============================================
+	// Actions
+	//============================================
+	public void TakeDamage(float damage){
+		_health -= damage;
+		if(_health <= 0)
+			Die();
+	}
+
+	public void Die(){
+		Debug.Log("Enemy is dead");
+		gameObject.SetActive(false);
 	}
 
 	//============================================
 	// Handle movement
 	//============================================
 	private void SetAnimation(){
-		if(_isMoving){
-			_rb.velocity = _velocity * _runSpeed;
+		if(isChasingPlayer){
+			_rb.velocity = velocity * _runSpeed;
 		} else {
 			_rb.velocity = new Vector2(0, 0);
 		}
-
-		SetDirection();
-		HandleSpriteFlip();
-		SetSprite();
 	}
 
 	private void SetDirection(){
 
-		if(_velocity.y > 0){
-			if(Mathf.Abs(_velocity.x) > 0){
+		if(velocity.y > 0.1f){
+			if(Mathf.Abs(velocity.x) > 0.1f){
 				_direction = 2;
 			} else {
 				_direction = 1;
 			}
-		} else if(_velocity.y < 0){
-			if(Mathf.Abs(_velocity.x) > 0){
+		} else if(velocity.y < -0.1f){
+			if(Mathf.Abs(velocity.x) > 0.1f){
 				_direction = 4;
 			} else {
 				_direction = 5;
 			}
-		} else if(Mathf.Abs(_velocity.x) > 0){ 
+		} else if(Mathf.Abs(velocity.x) > 0.1f){ 
 			_direction = 3;
 		}
 
@@ -91,10 +105,7 @@ public class EnemyController : MonoBehaviour
 			int frame = totalFrames % runSprite.Count;
 			_sprite.sprite = runSprite[frame];
 		} else {
-			float time = Time.time - _idleTime;
-			int totalFrames = (int)(time * _frameRate);
-			int frame = totalFrames % idleSprite.Count;
-			_sprite.sprite = idleSprite[frame];
+			_idleTime = Time.time;
 		}
 	}
 
@@ -147,12 +158,11 @@ public class EnemyController : MonoBehaviour
 	}
 
 	private void HandleSpriteFlip(){
-		if(!_sprite.flipX && _velocity.x < 0){
+		if(!_sprite.flipX && velocity.x < 0){
 			_sprite.flipX = true;
-		} else if(_sprite.flipX && _velocity.x > 0){
+		} else if(_sprite.flipX && velocity.x > 0){
 			_sprite.flipX = false;
 		}
 	}
-
 
 }

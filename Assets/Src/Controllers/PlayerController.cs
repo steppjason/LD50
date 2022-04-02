@@ -7,12 +7,19 @@ public class PlayerController : MonoBehaviour
 {
 	[SerializeField] float MAX_DASH_TIME = 2;
 	[SerializeField] float START_DASH_TIME = 0.1f;
+	[SerializeField] float MAX_HEALTH = 100f;
+
 	[SerializeField] float _runSpeed = 5;
+	[SerializeField] float _health = 50f;
+	[SerializeField] float _decayTime = 1f;
 
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] SpriteRenderer _sprite;
 	[SerializeField] BoxCollider2D _hitBox;
 	[SerializeField] Camera _camera;
+	[SerializeField] GameObject _weapon;
+	[SerializeField] PlayerUI _playerUI;
+
 
 	[Header("Animation Variables")]
 	[SerializeField] float _frameRate = 12;
@@ -37,31 +44,48 @@ public class PlayerController : MonoBehaviour
 	float _idleTime;
 	Vector2 _input;
 	Vector3 _vector;
-	float _decayTime;
 	float _playerHealth;
+
+	Vector2 _dashDirection;
 	float _dashTimer;
 	float _dashTime;
-	Vector3 _dashDirection;
 	bool _isDashing;
 
+	
 
+	
+
+	private void Awake() {
+		
+	}
 
 	// Start is called before the first frame update
 	void Start()
     {
-        
-    }
+		_playerUI.health = _health;
+	}
 
     // Update is called once per frame
     void Update()
     {
 		if(!_isDashing)
 			PlayerInput();
-
+		
+		Aim();
 		Dashing();
+		DrainHealth();
+
 		SetDirection();
 		HandleSpriteFlip();
-		
+
+		UpdateUI();
+
+		_hitBox.enabled = !_isDashing;
+	}
+
+
+	public void UpdateUI(){
+		_playerUI.health = _health;
 	}
 
 	//============================================
@@ -79,9 +103,6 @@ public class PlayerController : MonoBehaviour
 			SetSprite(GetIdleSpriteDirection());
 		}
 
-		if(Input.GetMouseButtonDown(0)){
-			Attack();
-		}
 
 		if(Input.GetMouseButtonDown(1)){
 			Dash();
@@ -98,8 +119,9 @@ public class PlayerController : MonoBehaviour
 		
 		if(_dashTimer <= 0){
 			_isDashing = true;
-			Vector3 mouseWorldPos = _camera.ScreenToWorldPoint(Input.mousePosition);
-			_dashDirection = (mouseWorldPos - transform.position).normalized;
+			Vector2 mouseWorldPos = _camera.ScreenToWorldPoint(Input.mousePosition);
+			_dashDirection = mouseWorldPos - new Vector2(transform.position.x, transform.position.y);
+			_dashDirection = _dashDirection.normalized;
 			_vector = _dashDirection;
 			_dashTimer = MAX_DASH_TIME;
 			_dashTime = START_DASH_TIME;
@@ -118,10 +140,38 @@ public class PlayerController : MonoBehaviour
 			_rb.velocity = _dashDirection * _dashSpeed;
 	}
 
-	private void Attack(){
-		Debug.Log("Left click pressed");
+	private void Aim(){
+		Vector2 mouseWorldPos = _camera.ScreenToWorldPoint(Input.mousePosition);
+		Vector2 difference = (mouseWorldPos - new Vector2(_weapon.transform.position.x, _weapon.transform.position.y)).normalized;
+		float angle = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+		_weapon.transform.rotation = Quaternion.Euler(0f, 0f, angle);
 	}
 
+
+	//============================================
+	// Health mechanics 
+	//============================================
+
+	public void DrainHealth(){
+		_health -= Time.deltaTime * _decayTime;
+		CheckDeath();
+	}
+
+	public void GainHealth(float hp){
+		_health += hp;
+		if(_health >= MAX_HEALTH)
+			_health = MAX_HEALTH;
+	}
+
+	public void TakeDamage(float damage){
+		_health -= damage;
+		CheckDeath();
+	}
+
+	public void CheckDeath(){
+		if(_health <= 0)
+			Debug.Log("Player dead");
+	}
 
 	//============================================
 	// Handle player sprite 
