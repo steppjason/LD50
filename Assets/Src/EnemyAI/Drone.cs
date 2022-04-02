@@ -8,29 +8,26 @@ public class Drone : MonoBehaviour
 	[SerializeField] float ATTACK_DAMAGE = 5;
 
 	[SerializeField] EnemyController _enemyController;
+	PlayerController _playerController;
 	[SerializeField] CircleCollider2D _visionCollider;
 	[SerializeField] CircleCollider2D _hitBoxCollider;
 
 	bool _isAttacking;
 	float _attackDelay;
 
-	// Start is called before the first frame update
-	void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
     {
 		Attack();
+		_playerController = FindObjectOfType<PlayerController>();
+		
 	}
 
 	private void Attack(){
 
 		if(_isAttacking){
 			if(_attackDelay <= 0){
-				//Debug.Log("ATTACK THE PLAYER");
+				_playerController.TakeDamage(5);
 				_attackDelay = MAX_ATTACK_DELAY;
 			}
 		}

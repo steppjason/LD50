@@ -5,19 +5,17 @@ using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
+	[SerializeField] GameController _gameController;
 	[SerializeField] TMP_Text _health;
 
 	public float health;
 
-	// Start is called before the first frame update
-	void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-		_health.text = health.ToString();
+		if(_gameController.State == GameState.DEAD)
+			_health.text = "0.000000";
+		else 
+			_health.text = health.ToString();
+
 	}
 }

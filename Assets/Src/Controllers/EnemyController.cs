@@ -5,10 +5,14 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-
+	GameController _gameController;
+	ChipController _chipController;
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] SpriteRenderer _sprite;
 	[SerializeField] float _health = 10f;
+
+	[SerializeField] Vector2 numberOfChips;
+	
 
 	[Header("Animation Variables")]
 	[SerializeField] public float _runSpeed = 1;
@@ -32,19 +36,22 @@ public class EnemyController : MonoBehaviour
 	public Vector2 velocity;
 	public bool isChasingPlayer;
 
-	// Start is called before the first frame update
-	void Start()
-    {
-        
-    }
+	private void Start() {
+		_gameController = FindObjectOfType<GameController>();
+		_chipController = FindObjectOfType<ChipController>();
+	}
 
     // Update is called once per frame
     void Update()
     {
-		SetAnimation();
+		if(_gameController.State == GameState.DEAD){
+			_rb.velocity = new Vector2(0, 0);
+		}
+		
 		SetDirection();
 		HandleSpriteFlip();
 		SetSprite();
+		SetAnimation();
 	}
 
 	//============================================
@@ -57,8 +64,19 @@ public class EnemyController : MonoBehaviour
 	}
 
 	public void Die(){
-		Debug.Log("Enemy is dead");
+		int chipCount = UnityEngine.Random.Range((int)numberOfChips.x, (int)numberOfChips.y);
+		for (int i = 0; i < chipCount; i++){
+			var chip = _chipController.GetAvailable();
+			chip.gameObject.SetActive(true);
+			chip.transform.position = new Vector2(gameObject.transform.position.x + UnityEngine.Random.Range(0f, 1f), 
+														gameObject.transform.position.y + UnityEngine.Random.Range(0f, 1f));
+			chip.Spawn();
+		}
+
+		_gameController.KillCount++;
+
 		gameObject.SetActive(false);
+
 	}
 
 	//============================================

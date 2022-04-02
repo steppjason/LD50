@@ -5,13 +5,18 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+	[SerializeField] GameController _gameController;
+
 	[SerializeField] float MAX_DASH_TIME = 2;
 	[SerializeField] float START_DASH_TIME = 0.1f;
 	[SerializeField] float MAX_HEALTH = 100f;
+	[SerializeField] float MAX_IFRAME = 2f;
 
 	[SerializeField] float _runSpeed = 5;
 	[SerializeField] float _health = 50f;
 	[SerializeField] float _decayTime = 1f;
+	[SerializeField] float _iFrameDecay = 1f;
 
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] SpriteRenderer _sprite;
@@ -39,8 +44,9 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] List<Sprite> _eIdleSprites;
 	[SerializeField] List<Sprite> _seIdleSprites;
 	[SerializeField] List<Sprite> _sIdleSprites;
-	
 
+
+	SpriteRenderer _spriteRenderer;
 	float _idleTime;
 	Vector2 _input;
 	Vector3 _vector;
@@ -50,37 +56,38 @@ public class PlayerController : MonoBehaviour
 	float _dashTimer;
 	float _dashTime;
 	bool _isDashing;
+	bool _isIFrame = false;
+	float _iFrameTime;
 
-	
 
-	
-
-	private void Awake() {
-		
-	}
-
-	// Start is called before the first frame update
 	void Start()
     {
 		_playerUI.health = _health;
+		_spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 	}
 
-    // Update is called once per frame
     void Update()
     {
-		if(!_isDashing)
-			PlayerInput();
-		
-		Aim();
-		Dashing();
-		DrainHealth();
+		if(_gameController.State == GameState.GAME){
+			if(!_isDashing)
+				PlayerInput();
 
-		SetDirection();
-		HandleSpriteFlip();
+			if(_isIFrame)
+				IFrames();
+
+			Aim();
+			Dashing();
+			DrainHealth();
+
+			SetDirection();
+			HandleSpriteFlip();
+
+			_hitBox.enabled = !_isDashing;
+		} else if(_gameController.State == GameState.DEAD){
+			_rb.velocity = new Vector2(0, 0);
+		}
 
 		UpdateUI();
-
-		_hitBox.enabled = !_isDashing;
 	}
 
 
@@ -147,6 +154,14 @@ public class PlayerController : MonoBehaviour
 		_weapon.transform.rotation = Quaternion.Euler(0f, 0f, angle);
 	}
 
+	private void IFrames(){
+		_spriteRenderer.color = new Color(1, 1, 1, 0.1f);
+		_iFrameTime -= _iFrameDecay * Time.deltaTime;
+		if(_iFrameTime <= 0){
+			_spriteRenderer.color = new Color(1, 1, 1, 1);
+			_isIFrame = false;
+		}
+	}
 
 	//============================================
 	// Health mechanics 
@@ -164,13 +179,19 @@ public class PlayerController : MonoBehaviour
 	}
 
 	public void TakeDamage(float damage){
-		_health -= damage;
+		if(!_isIFrame){
+			_isIFrame = true;
+			_iFrameTime = MAX_IFRAME;
+			_health -= damage;
+		}
+		
 		CheckDeath();
 	}
 
 	public void CheckDeath(){
-		if(_health <= 0)
-			Debug.Log("Player dead");
+		if(_health <= 0){
+			_gameController.State = GameState.DEAD;
+		}
 	}
 
 	//============================================

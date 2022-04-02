@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Blade : MonoBehaviour
 {
+	[SerializeField] GameController _gameController;
 	[SerializeField] float DAMAGE = 5;
 	[SerializeField] Collider2D _collider;
 	[SerializeField] float attackRate = 3f;
@@ -15,10 +16,12 @@ public class Blade : MonoBehaviour
 
     void Update()
     {
-		if(Time.time >= nextAttackTime){
-			if(Input.GetMouseButtonDown(0)){
-				Attack();
-				nextAttackTime = Time.time + 1f / attackRate;
+		if(_gameController.State == GameState.GAME){
+			if(Time.time >= nextAttackTime){
+				if(Input.GetMouseButtonDown(0)){
+					Attack();
+					nextAttackTime = Time.time + 1f / attackRate;
+				}
 			}
 		}
     }
@@ -26,8 +29,10 @@ public class Blade : MonoBehaviour
 	private void Attack(){
 		Physics2D.OverlapCollider(_collider, contactFilter, hitEnemies);
 		foreach(Collider2D enemy in hitEnemies){
+			Debug.Log(enemy);
 			enemy.gameObject.GetComponentInParent<EnemyController>().TakeDamage(DAMAGE);
 		}
+
 	}
 
 
