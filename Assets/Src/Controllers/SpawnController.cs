@@ -12,6 +12,7 @@ public class SpawnController : MonoBehaviour
 	[SerializeField] float _spawnRate;
 
 	GameController _gameController;
+	PlayerController _playerController;
 
 	Vector2 defaultPos = new Vector2(-1000, -1000);
 	EnemyController[] _enemies;
@@ -23,6 +24,7 @@ public class SpawnController : MonoBehaviour
 	void Start()
     {
 		_gameController = FindObjectOfType<GameController>();
+		_playerController = FindObjectOfType<PlayerController>();
 		CreatePool();
 	}
 
@@ -38,7 +40,13 @@ public class SpawnController : MonoBehaviour
 			_spawnTimer = MAX_SPAWN_TIMER;
 			var enemy = GetAvailable();
 			enemy.gameObject.SetActive(true);
-			enemy.transform.position = new Vector2(Random.Range(-10,10), Random.Range(-10,10));
+
+			int rnd = randomBoolean() ? 1 : -1;
+			float xVal = (_playerController.transform.position.x + Random.Range(8, 12)) * rnd;
+			rnd = randomBoolean() ? 1 : -1;
+			float yVal = (_playerController.transform.position.y + Random.Range(8, 12)) * rnd;
+
+			enemy.transform.position = new Vector2(xVal, yVal);
 		}
 
 		_spawnTimer -= _spawnDecay * Time.deltaTime;
@@ -63,6 +71,14 @@ public class SpawnController : MonoBehaviour
 			}
 		}
 		return null;
+	}
+
+
+	private bool randomBoolean(){
+		 if (Random.value >= 0.5)
+			return true;
+		
+		return false;
 	}
 
 }

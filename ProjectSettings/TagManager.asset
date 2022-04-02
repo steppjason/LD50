@@ -15,7 +15,7 @@ TagManager:
   - Enemies
   - EnemyHitbox
   - Chips
-  - 
+  - Ground
   - 
   - 
   - 
@@ -40,4 +40,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1571560619
+    locked: 0
+  - name: Ground
+    uniqueID: 940667943
+    locked: 0
+  - name: Enemy
+    uniqueID: 3806299175
+    locked: 0
+  - name: Player
+    uniqueID: 1553891191
+    locked: 0
+  - name: UI
+    uniqueID: 469559837
     locked: 0

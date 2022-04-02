@@ -20,10 +20,11 @@ public class PlayerController : MonoBehaviour
 
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] SpriteRenderer _sprite;
-	[SerializeField] BoxCollider2D _hitBox;
 	[SerializeField] Camera _camera;
 	[SerializeField] GameObject _weapon;
 	[SerializeField] PlayerUI _playerUI;
+
+	[SerializeField] LayerMask _layerMask;
 
 
 	[Header("Animation Variables")]
@@ -56,6 +57,7 @@ public class PlayerController : MonoBehaviour
 	float _dashTimer;
 	float _dashTime;
 	bool _isDashing;
+	bool _canDash = true;
 	bool _isIFrame = false;
 	float _iFrameTime;
 
@@ -68,7 +70,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+			
+		DashDecay();
+
 		if(_gameController.State == GameState.GAME){
+
 			if(!_isDashing)
 				PlayerInput();
 
@@ -76,18 +82,19 @@ public class PlayerController : MonoBehaviour
 				IFrames();
 
 			Aim();
-			Dashing();
 			DrainHealth();
-
 			SetDirection();
 			HandleSpriteFlip();
 
-			_hitBox.enabled = !_isDashing;
 		} else if(_gameController.State == GameState.DEAD){
 			_rb.velocity = new Vector2(0, 0);
 		}
 
 		UpdateUI();
+	}
+
+	private void FixedUpdate() {
+		Dashing();
 	}
 
 
@@ -109,7 +116,6 @@ public class PlayerController : MonoBehaviour
 			_rb.velocity = new Vector2(0, 0);
 			SetSprite(GetIdleSpriteDirection());
 		}
-
 
 		if(Input.GetMouseButtonDown(1)){
 			Dash();
@@ -136,15 +142,27 @@ public class PlayerController : MonoBehaviour
 
 	}
 
-	private void Dashing(){
+	private void DashDecay(){
 		_dashTimer -= Time.deltaTime;
 		_dashTime -= Time.deltaTime;
+	}
+
+	private void Dashing(){
+
+		Vector2 dashPosition = new Vector2(transform.position.x, transform.position.y) + _dashDirection * _dashSpeed;
+		RaycastHit2D raycastHit2D = Physics2D.Raycast(transform.position, _dashDirection, _dashSpeed, _layerMask);
+
+		if(raycastHit2D.collider != null){
+			dashPosition = raycastHit2D.point;
+		}
 
 		if(_dashTime <= 0)
 			_isDashing = false;
 
-		if(_isDashing)
-			_rb.velocity = _dashDirection * _dashSpeed;
+		if(_isDashing && _canDash)
+			_rb.MovePosition(dashPosition);
+
+
 	}
 
 	private void Aim(){
@@ -174,6 +192,7 @@ public class PlayerController : MonoBehaviour
 
 	public void GainHealth(float hp){
 		_health += hp;
+		_playerUI.SpawnHealthNumber("+" + hp);
 		if(_health >= MAX_HEALTH)
 			_health = MAX_HEALTH;
 	}

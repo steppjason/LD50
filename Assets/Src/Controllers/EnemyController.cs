@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public  class EnemyController : MonoBehaviour
 {
 	GameController _gameController;
 	ChipController _chipController;
@@ -12,7 +12,8 @@ public class EnemyController : MonoBehaviour
 	[SerializeField] float _health = 10f;
 
 	[SerializeField] Vector2 numberOfChips;
-	
+	[SerializeField] LineRenderer _circleRenderer;
+
 
 	[Header("Animation Variables")]
 	[SerializeField] public float _runSpeed = 1;
@@ -35,10 +36,12 @@ public class EnemyController : MonoBehaviour
 
 	public Vector2 velocity;
 	public bool isChasingPlayer;
+	
 
 	private void Start() {
 		_gameController = FindObjectOfType<GameController>();
 		_chipController = FindObjectOfType<ChipController>();
+		
 	}
 
     // Update is called once per frame
@@ -47,11 +50,13 @@ public class EnemyController : MonoBehaviour
 		if(_gameController.State == GameState.DEAD){
 			_rb.velocity = new Vector2(0, 0);
 		}
-		
+
 		SetDirection();
 		HandleSpriteFlip();
 		SetSprite();
 		SetAnimation();
+		
+		
 	}
 
 	//============================================
@@ -74,7 +79,7 @@ public class EnemyController : MonoBehaviour
 		}
 
 		_gameController.KillCount++;
-
+		gameObject.GetComponentInChildren<Drone>()._isAttacking = false;
 		gameObject.SetActive(false);
 
 	}
@@ -182,5 +187,6 @@ public class EnemyController : MonoBehaviour
 			_sprite.flipX = false;
 		}
 	}
-
+	
+	
 }

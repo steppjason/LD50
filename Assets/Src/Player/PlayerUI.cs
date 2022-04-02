@@ -1,21 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
 	[SerializeField] GameController _gameController;
+	[SerializeField] PlayerController _playerController;
 	[SerializeField] TMP_Text _health;
+	[SerializeField] Image _healthBar;
+
+	[SerializeField] int _healthUICount = 50;
+	[SerializeField] GameObject _pool;
+	[SerializeField] HealthNumber _healthUI;
+
+	Vector2 defaultPos = new Vector2(-1000, -1000);
+	HealthNumber[] _healthUIs;
 
 	public float health;
 
+	private void Start() {
+		CreatePool();
+	}
+
     void Update()
     {
-		if(_gameController.State == GameState.DEAD)
+		if(_gameController.State == GameState.DEAD){
 			_health.text = "0.000000";
-		else 
-			_health.text = health.ToString();
+			_healthBar.fillAmount = 0;
+		}
+		else{
+			_health.text = health.ToString();	
+			_healthBar.fillAmount = (float)(health / 100);
+			Debug.Log(health / 100);
+			Debug.Log(_healthBar.fillAmount);
+		}
 
+	}
+
+	public void SpawnHealthNumber(string health){
+		var ui = GetAvailable();
+		ui.GetComponent<TMP_Text>().text = health;
+		ui.GetComponent<TMP_Text>().rectTransform.anchoredPosition = new Vector2(Random.Range(0,1f), 0);
+		ui.Spawn();
+	}
+
+
+	private void CreatePool(){
+		_healthUIs = new HealthNumber[_healthUICount];
+		for (int i = 0; i < _healthUIs.Length; i++){
+			_healthUIs[i] = Instantiate(_healthUI, defaultPos, Quaternion.identity);
+			_healthUIs[i].transform.parent = _pool.transform;
+			_healthUIs[i].gameObject.SetActive(false);
+		}
+	}
+
+	public HealthNumber GetAvailable(){
+		for (int i = 0; i < _healthUIs.Length; i++){
+			if(!_healthUIs[i].gameObject.activeInHierarchy){
+				return _healthUIs[i];
+			}
+		}
+		return null;
 	}
 }

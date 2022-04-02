@@ -29,7 +29,6 @@ public class Blade : MonoBehaviour
 	private void Attack(){
 		Physics2D.OverlapCollider(_collider, contactFilter, hitEnemies);
 		foreach(Collider2D enemy in hitEnemies){
-			Debug.Log(enemy);
 			enemy.gameObject.GetComponentInParent<EnemyController>().TakeDamage(DAMAGE);
 		}
 

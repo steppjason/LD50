@@ -27,20 +27,20 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(State == GameState.TITLE)
-			Debug.Log("Game is title");
+		// if(State == GameState.TITLE)
+		// 	Debug.Log("Game is title");
 
-		if(State == GameState.GAME)
-			Debug.Log("Game is playing");
+		// if(State == GameState.GAME)
+		// 	Debug.Log("Game is playing");
         
-		if(State == GameState.DEAD)
-			Debug.Log("Player is dead");
+		// if(State == GameState.DEAD)
+		// 	Debug.Log("Player is dead");
 		
-		if(State == GameState.PAUSE)
-			Debug.Log("Game is paused");
+		// if(State == GameState.PAUSE)
+		// 	Debug.Log("Game is paused");
 		
-		if(State == GameState.CREDITS)
-			Debug.Log("Game is credits");
+		// if(State == GameState.CREDITS)
+		// 	Debug.Log("Game is credits");
 
 	}
 }
