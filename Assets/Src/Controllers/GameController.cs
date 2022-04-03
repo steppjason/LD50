@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
 		
         
 		if(State == GameState.DEAD){
-			StartCoroutine(_fader.FadeIn(5f));
+			//StartCoroutine(_fader.FadeIn(5f));
 			_musicController.FadeOut("Music", 5f, 0);
 			alpha += Time.deltaTime * 0.5f;
 			_gameOver.color = new Color(1, 0.4817529f, 0, alpha);

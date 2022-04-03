@@ -119,7 +119,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 3.5
+  m_Radius: 7.73
 --- !u!114 &8715097076071749770
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +184,7 @@ MonoBehaviour:
   HEALTH_VALUE: 2
   _rb: {fileID: 8715097077084623869}
   _moveSpeed: 0
-  _acceleration: 10
+  _acceleration: 20
   _deceleration: 5
   _collider: {fileID: 8715097077084623865}
 --- !u!212 &8715097077084623866

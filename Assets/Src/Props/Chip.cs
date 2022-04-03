@@ -10,7 +10,7 @@ public class Chip : MonoBehaviour
 	[SerializeField] float HEALTH_VALUE = 1f;
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] float _moveSpeed = 1f;
-	[SerializeField] float _acceleration = 0.1f;
+	[SerializeField] float _acceleration = 0.5f;
 	[SerializeField] float _deceleration = 1f;
 	[SerializeField] Collider2D _collider;
 
