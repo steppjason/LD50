@@ -2,7 +2,7 @@
 
 [https://ldjam.com/events/ludum-dare/50](https://ldjam.com/events/ludum-dare/50)
 
-[https://tengusheath.itch.io/zez](Play the game here)
+[https://tengusheath.itch.io/zez](https://tengusheath.itch.io/zez)
 
 Made for Ludum Dare 50, "Delay the inevitable"
 
