@@ -6,6 +6,7 @@ public class Chip : MonoBehaviour
 {
 	GameController _gameController;
 	PlayerController _playerController;
+	AudioController _audioController;
 	[SerializeField] float HEALTH_VALUE = 1f;
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] float _moveSpeed = 1f;
@@ -19,6 +20,7 @@ public class Chip : MonoBehaviour
 	private void Start() {
 		_gameController = FindObjectOfType<GameController>();
 		_playerController = FindObjectOfType<PlayerController>();
+		_audioController = FindObjectOfType<AudioController>();
 	}
 
     void Update()
@@ -57,6 +59,7 @@ public class Chip : MonoBehaviour
 	private void OnTriggerEnter2D(Collider2D other) {
 		if(other.gameObject.name == "PlayerController"){
 			if(_collider.IsTouching(other)){
+				_audioController.Play("Pickup");
 				gameObject.SetActive(false);
 				other.gameObject.GetComponent<PlayerController>().GainHealth(HEALTH_VALUE);
 			}

@@ -7,6 +7,8 @@ public  class EnemyController : MonoBehaviour
 {
 	GameController _gameController;
 	ChipController _chipController;
+	AudioController _audioController;
+	CameraController _cameraController;
 	[SerializeField] Rigidbody2D _rb;
 	[SerializeField] SpriteRenderer _sprite;
 	[SerializeField] float _health = 10f;
@@ -36,12 +38,15 @@ public  class EnemyController : MonoBehaviour
 
 	public Vector2 velocity;
 	public bool isChasingPlayer;
-	
+	CMShake cm_camera;
+
 
 	private void Start() {
 		_gameController = FindObjectOfType<GameController>();
 		_chipController = FindObjectOfType<ChipController>();
-		
+		_audioController = FindObjectOfType<AudioController>();
+		_cameraController = FindObjectOfType<CameraController>();
+		cm_camera = FindObjectOfType<CMShake>();
 	}
 
     // Update is called once per frame
@@ -77,6 +82,16 @@ public  class EnemyController : MonoBehaviour
 														gameObject.transform.position.y + UnityEngine.Random.Range(0f, 1f));
 			chip.Spawn();
 		}
+
+		int rng = UnityEngine.Random.Range(1, 3);
+		if(rng == 1)
+			_audioController.Play("Hit1");
+		else if(rng == 2)
+			_audioController.Play("Hit2");
+		else if(rng == 3)
+			_audioController.Play("Hit3");
+
+		cm_camera.ShakeCamera(5f, 5f, 0.1f);
 
 		_gameController.KillCount++;
 		gameObject.GetComponentInChildren<Drone>()._isAttacking = false;

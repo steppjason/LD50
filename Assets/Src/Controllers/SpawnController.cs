@@ -42,9 +42,9 @@ public class SpawnController : MonoBehaviour
 			enemy.gameObject.SetActive(true);
 
 			int rnd = randomBoolean() ? 1 : -1;
-			float xVal = (_playerController.transform.position.x + Random.Range(8, 12)) * rnd;
+			float xVal = Random.Range(0, 30) * rnd;
 			rnd = randomBoolean() ? 1 : -1;
-			float yVal = (_playerController.transform.position.y + Random.Range(8, 12)) * rnd;
+			float yVal = Random.Range(0, 20) * rnd;
 
 			enemy.transform.position = new Vector2(xVal, yVal);
 		}

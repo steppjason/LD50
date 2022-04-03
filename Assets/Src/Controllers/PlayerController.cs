@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 {
 
 	[SerializeField] GameController _gameController;
+	[SerializeField] AudioController _audioController;
 
 	[SerializeField] float MAX_DASH_TIME = 2;
 	[SerializeField] float START_DASH_TIME = 0.1f;
@@ -60,12 +61,18 @@ public class PlayerController : MonoBehaviour
 	bool _canDash = true;
 	bool _isIFrame = false;
 	float _iFrameTime;
+	public float maxHealth;
+
+	CMShake cm_camera;
 
 
 	void Start()
     {
 		_playerUI.health = _health;
 		_spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+		maxHealth = MAX_HEALTH;
+
+		cm_camera = FindObjectOfType<CMShake>();
 	}
 
     void Update()
@@ -186,7 +193,7 @@ public class PlayerController : MonoBehaviour
 	//============================================
 
 	public void DrainHealth(){
-		_health -= Time.deltaTime * _decayTime;
+		_health -= Time.deltaTime * (_decayTime + (_gameController.KillCount / 20)) ;
 		CheckDeath();
 	}
 
@@ -202,6 +209,8 @@ public class PlayerController : MonoBehaviour
 			_isIFrame = true;
 			_iFrameTime = MAX_IFRAME;
 			_health -= damage;
+			_audioController.Play("PlayerHit");
+			cm_camera.ShakeCamera(5f, 200f, 0.5f);
 		}
 		
 		CheckDeath();

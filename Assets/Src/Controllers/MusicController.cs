@@ -44,7 +44,6 @@ public class MusicController : MonoBehaviour
 	public void FadeOut(string name, float fadeTime, float volume){
 		MusicFX sfx = Array.Find(musicFXs, musicFX => musicFX.name == name);
 		sfx.volume = 0f;
-		sfx.source.Play();
 		StartCoroutine(DoFadeOut(sfx.source, fadeTime, volume));
 	}
 

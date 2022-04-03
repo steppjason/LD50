@@ -11,6 +11,8 @@ public class PlayerUI : MonoBehaviour
 	[SerializeField] TMP_Text _health;
 	[SerializeField] Image _healthBar;
 
+	[SerializeField] TMP_Text _killCount;
+
 	[SerializeField] int _healthUICount = 50;
 	[SerializeField] GameObject _pool;
 	[SerializeField] HealthNumber _healthUI;
@@ -19,22 +21,25 @@ public class PlayerUI : MonoBehaviour
 	HealthNumber[] _healthUIs;
 
 	public float health;
+	
 
 	private void Start() {
 		CreatePool();
+		
 	}
 
     void Update()
     {
+	
 		if(_gameController.State == GameState.DEAD){
 			_health.text = "0.000000";
 			_healthBar.fillAmount = 0;
+			_killCount.text = _gameController.KillCount.ToString();
 		}
 		else{
-			_health.text = health.ToString();	
-			_healthBar.fillAmount = (float)(health / 100);
-			Debug.Log(health / 100);
-			Debug.Log(_healthBar.fillAmount);
+			_health.text = health.ToString();
+			_killCount.text = _gameController.KillCount.ToString();
+			_healthBar.fillAmount = (float)(health / _playerController.maxHealth);
 		}
 
 	}
@@ -51,7 +56,7 @@ public class PlayerUI : MonoBehaviour
 		_healthUIs = new HealthNumber[_healthUICount];
 		for (int i = 0; i < _healthUIs.Length; i++){
 			_healthUIs[i] = Instantiate(_healthUI, defaultPos, Quaternion.identity);
-			_healthUIs[i].transform.parent = _pool.transform;
+			_healthUIs[i].transform.SetParent(_pool.transform);
 			_healthUIs[i].gameObject.SetActive(false);
 		}
 	}

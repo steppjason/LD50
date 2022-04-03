@@ -22,6 +22,7 @@ public class GameController : MonoBehaviour
 	void Start()
     {
 		State = GameState.GAME;
+		_musicController.FadeIn("Music", 5f, 0.5f);
 	}
 
     // Update is called once per frame
@@ -33,8 +34,10 @@ public class GameController : MonoBehaviour
 		// if(State == GameState.GAME)
 		// 	Debug.Log("Game is playing");
         
-		// if(State == GameState.DEAD)
-		// 	Debug.Log("Player is dead");
+		if(State == GameState.DEAD){
+			_musicController.FadeOut("Music", 5f, 0);
+		}
+		
 		
 		// if(State == GameState.PAUSE)
 		// 	Debug.Log("Game is paused");
